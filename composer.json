@@ -1,0 +1,16 @@
+{
+    "name": "kitbrennan90/laravel-sendgrid-webhooks",
+    "description": "Laravel package for receiving and storing event webhooks from Sendgrid",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kit Brennan",
+            "email": "kitbrennan90@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "sendgrid/sendgrid": "~7"
+    }
+}
