@@ -12,5 +12,24 @@
     "require": {
         "php": ">=7.0",
         "sendgrid/sendgrid": "~7"
+    },
+    "autoload": {
+        "psr-4": {
+            "LaravelSendgridWebhooks\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LaravelSendgridWebhooks\\ServiceProvider"
+            ]
+        }
+    },
+    "require-dev": {
+        "laravel/framework": "5.5.x",
+        "orchestra/testbench": "^3.5",
+        "phpunit/phpunit": "^7.5"
     }
 }
