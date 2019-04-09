@@ -28,8 +28,8 @@
         }
     },
     "require-dev": {
-        "laravel/framework": "5.5.x",
-        "orchestra/testbench": "^3.5",
+        "laravel/framework": "~5.8.3",
+        "orchestra/testbench": "^3.8",
         "phpunit/phpunit": "^7.5"
     }
 }
