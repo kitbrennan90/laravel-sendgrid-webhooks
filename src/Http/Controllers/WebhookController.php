@@ -54,7 +54,7 @@ class WebhookController extends Controller
                 '*.event' => 'required|in:' . implode(',', EventEnum::getAll()),
                 '*.sg_event_id' => 'required|string',
                 '*.sg_message_id' => 'required|string',
-                '*.category' => 'required|string',
+                '*.category' => 'string',
             ]
         );
         if ($validator->fails()) {

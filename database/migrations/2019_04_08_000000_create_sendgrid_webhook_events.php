@@ -20,7 +20,7 @@ class CreateSendgridWebhookEvents extends Migration
             $table->timestamp('timestamp');
             $table->string('email')->index();
             $table->string('event')->index();
-            $table->string('category')->index();
+            $table->string('category')->nullable()->index();
             $table->string('sg_event_id')->unique();
             $table->string('sg_message_id')->index();
             $table->jsonb('payload');
