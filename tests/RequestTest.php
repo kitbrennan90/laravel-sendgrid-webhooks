@@ -130,6 +130,34 @@ class RequestTest extends Orchestra\Testbench\TestCase
     /**
      * If the payload does not contain an email field it should be rejected
      */
+    public function testPayloadWithoutCategoryShouldBeSuccessful()
+    {
+        $payload = [[
+            "email" => "example@test.com",
+            "timestamp" => 1554728844,
+            "smtp-id" => "<14c5d75ce93.dfd.64b469@ismtpd-555>",
+            "event" => "processed",
+            "sg_event_id" => "WiiomrqWErazAXdj782fZw==",
+            "sg_message_id" => "14c5d75ce93.dfd.64b469.filter0001.16648.5515E0B88.0"
+        ]];
+
+        $preWebhookCount = SendgridWebhookEvent::count();
+
+        /** @var \Illuminate\Foundation\Testing\TestResponse $result */
+        $result = $this->postJson(
+            'sendgrid/webhook',
+            $payload
+        );
+        $result->assertStatus(200);
+
+        $postWebhookCount = SendgridWebhookEvent::count();
+
+        $this->assertEquals($preWebhookCount + 1, $postWebhookCount);
+    }
+
+    /**
+     * If the payload does not contain an email field it should be rejected
+     */
     public function testPayloadWithUnknownEventShouldBeRejected()
     {
         $payload = [[

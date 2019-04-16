@@ -85,7 +85,7 @@ class WebhookController extends Controller
         $newEvent->event = $event['event'];
         $newEvent->sg_event_id = $event['sg_event_id'];
         $newEvent->sg_message_id = $event['sg_message_id'];
-        $newEvent->category = $event['category'];
+        $newEvent->category = $event['category'] ?? null;
         $newEvent->payload = $event;
         $newEvent->save();
     }
