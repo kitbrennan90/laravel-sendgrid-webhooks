@@ -92,7 +92,7 @@ $event = SendgridWebhookEvent::first();
 $event->timestamp;
 $event->email;
 $event->event;
-$event->category;
+$event->categories;
 $event->sg_event_id;
 $event->sg_message_id;
 $event->payload; // Array of full payload sent by Sendgrid

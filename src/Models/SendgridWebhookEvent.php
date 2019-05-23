@@ -10,7 +10,8 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package LaravelSendgridWebhooks\Models
  *
- * @property string $category
+ * @property string|null $category Backwards compatible, returns first category from $categories. DO NOT USE
+ * @property array|string[] $categories
  * @property Carbon $created_at
  * @property string $email
  * @property string $event
@@ -27,5 +28,37 @@ class SendgridWebhookEvent extends Model
 
     protected $casts = [
         'payload' => 'array',
+        'categories' => 'array',
     ];
+
+    /*********************************************/
+    /************* ACCESSORS **/
+    /*********************************************/
+
+    /**
+     * Backwards compatible accessor. Please use $categories instead and access the array of categories
+     * @return null|string
+     */
+    public function getCategoryAttribute()
+    {
+        if (count($this->categories)) {
+            return $this->categories[0];
+        }
+
+        return null;
+    }
+
+    /*********************************************/
+    /************* MUTATORS **/
+    /*********************************************/
+
+    /**
+     * Backwards compatible mutator. Please use $categories instead and mutate the array of categories
+     *
+     * @param string $value
+     */
+    public function setCategoryAttribute(string $value)
+    {
+        $this->attributes['categories'] = json_encode([$value]);
+    }
 }

@@ -54,7 +54,12 @@ class WebhookController extends Controller
                 '*.event' => 'required|in:' . implode(',', EventEnum::getAll()),
                 '*.sg_event_id' => 'required|string',
                 '*.sg_message_id' => 'required|string',
-                '*.category' => 'string',
+                '*.category' => function ($attribute, $value, $fail) {
+                    if (!is_null($value) && !in_array(gettype($value), ['string', 'array'])) {
+                        $fail($attribute.' must be a string or array.');
+                    }
+                },
+                '*.category.*' => 'string',
             ]
         );
         if ($validator->fails()) {
@@ -85,8 +90,17 @@ class WebhookController extends Controller
         $newEvent->event = $event['event'];
         $newEvent->sg_event_id = $event['sg_event_id'];
         $newEvent->sg_message_id = $event['sg_message_id'];
-        $newEvent->category = $event['category'] ?? null;
         $newEvent->payload = $event;
+
+        if (!empty($event['category'])) {
+            $category = $event['category'];
+            if (gettype($category) === "string") {
+                $newEvent->categories = [$category];
+            } else {
+                $newEvent->categories = $category;
+            }
+        }
+
         $newEvent->save();
     }
 

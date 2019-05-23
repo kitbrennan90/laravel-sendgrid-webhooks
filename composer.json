@@ -11,6 +11,7 @@
     ],
     "require": {
         "php": ">=7.0",
+        "ext-json": "*",
         "sendgrid/sendgrid": "~7"
     },
     "autoload": {

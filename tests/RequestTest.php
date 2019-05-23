@@ -158,6 +158,76 @@ class RequestTest extends Orchestra\Testbench\TestCase
     /**
      * If the payload does not contain an email field it should be rejected
      */
+    public function testPayloadWithArrayCategoryShouldBeSuccessful()
+    {
+        $messageId = "14c5d75ce93.dfd.64b469.filter0001.16648.5515E0B88.2";
+        $category = "bird facts";
+        $payload = [[
+            "email" => "example@test.com",
+            "timestamp" => 1554728844,
+            "smtp-id" => "<14c5d75ce93.dfd.64b469@ismtpd-555>",
+            "event" => "processed",
+            "category" => [$category],
+            "sg_event_id" => "WiiomrqWErazAXdj782fZw==",
+            "sg_message_id" => $messageId,
+        ]];
+
+        $preWebhookCount = SendgridWebhookEvent::count();
+
+        /** @var \Illuminate\Foundation\Testing\TestResponse $result */
+        $result = $this->postJson(
+            'sendgrid/webhook',
+            $payload
+        );
+        $result->assertStatus(200);
+
+        $postWebhookCount = SendgridWebhookEvent::count();
+
+        $this->assertEquals($preWebhookCount + 1, $postWebhookCount);
+
+        $newEvent = SendgridWebhookEvent::where('sg_message_id', $messageId)->first();
+        $this->assertCount(1, $newEvent->categories, "Should be one item in categories array");
+        $this->assertEquals($category, $newEvent->categories[0], 'Category should be saved in $categories');
+    }
+
+    /**
+     * If the payload does not contain an email field it should be rejected
+     */
+    public function testPayloadWithStringCategoryShouldBeSuccessful()
+    {
+        $messageId = "14c5d75ce93.dfd.64b469.filter0001.16648.5515E0B88.1";
+        $category = "wolf facts";
+        $payload = [[
+            "email" => "example@test.com",
+            "timestamp" => 1554728844,
+            "smtp-id" => "<14c5d75ce93.dfd.64b469@ismtpd-555>",
+            "event" => "processed",
+            "category" => $category,
+            "sg_event_id" => "WiiomrqWErazAXdj782fZw==",
+            "sg_message_id" => $messageId,
+        ]];
+
+        $preWebhookCount = SendgridWebhookEvent::count();
+
+        /** @var \Illuminate\Foundation\Testing\TestResponse $result */
+        $result = $this->postJson(
+            'sendgrid/webhook',
+            $payload
+        );
+        $result->assertStatus(200);
+
+        $postWebhookCount = SendgridWebhookEvent::count();
+
+        $this->assertEquals($preWebhookCount + 1, $postWebhookCount);
+
+        $newEvent = SendgridWebhookEvent::where('sg_message_id', $messageId)->first();
+        $this->assertCount(1, $newEvent->categories, "Should be one item in categories array");
+        $this->assertEquals($category, $newEvent->categories[0], 'Category should be saved in $categories');
+    }
+
+    /**
+     * If the payload does not contain an email field it should be rejected
+     */
     public function testPayloadWithUnknownEventShouldBeRejected()
     {
         $payload = [[
