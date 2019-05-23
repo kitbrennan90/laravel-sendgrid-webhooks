@@ -17,7 +17,7 @@ class CreateSendgridWebhookEvents extends Migration
             $table->increments('id');
             $table->timestamps();
 
-            $table->timestamp('timestamp');
+            $table->timestamp('timestamp')->nullable();
             $table->string('email')->index();
             $table->string('event')->index();
             $table->string('category')->nullable()->index();
