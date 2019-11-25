@@ -22,7 +22,7 @@ class UpdateCategoryColumnToArray extends Migration
         switch ($driver) {
             case 'sqlite': {
                 Schema::table('sendgrid_webhook_events', function (Blueprint $table) {
-                    $table->jsonb('categories')->default(json_encode([]))->index();
+                    $table->jsonb('categories')->nullable()->index();
                 });
 
                 DB::table('sendgrid_webhook_events')
