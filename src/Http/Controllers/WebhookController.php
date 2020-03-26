@@ -5,6 +5,7 @@ namespace LaravelSendgridWebhooks\Http\Controllers;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -79,29 +80,31 @@ class WebhookController extends Controller
      */
     private function processEvent(array $event): void
     {
-        if ($this->sendgridWebhookEvent->where('sg_event_id', $event['sg_event_id'])->count()) {
-            $this->logDuplicateEvent($event);
-            return;
-        }
-
-        $newEvent = new SendgridWebhookEvent;
-        $newEvent->timestamp = $event['timestamp'];
-        $newEvent->email = $event['email'];
-        $newEvent->event = $event['event'];
-        $newEvent->sg_event_id = $event['sg_event_id'];
-        $newEvent->sg_message_id = $event['sg_message_id'];
-        $newEvent->payload = $event;
-
-        if (!empty($event['category'])) {
-            $category = $event['category'];
-            if (gettype($category) === "string") {
-                $newEvent->categories = [$category];
-            } else {
-                $newEvent->categories = $category;
+        DB::transaction(function() use ($event) {
+            if ($this->sendgridWebhookEvent->where('sg_event_id', $event['sg_event_id'])->sharedLock()->count()) {
+                $this->logDuplicateEvent($event);
+                return;
             }
-        }
 
-        $newEvent->save();
+            $newEvent = new SendgridWebhookEvent;
+            $newEvent->timestamp = $event['timestamp'];
+            $newEvent->email = $event['email'];
+            $newEvent->event = $event['event'];
+            $newEvent->sg_event_id = $event['sg_event_id'];
+            $newEvent->sg_message_id = $event['sg_message_id'];
+            $newEvent->payload = $event;
+
+            if (!empty($event['category'])) {
+                $category = $event['category'];
+                if (gettype($category) === "string") {
+                    $newEvent->categories = [$category];
+                } else {
+                    $newEvent->categories = $category;
+                }
+            }
+
+            $newEvent->save();
+        }, 3);
     }
 
     /**
