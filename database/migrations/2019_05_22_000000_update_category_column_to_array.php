@@ -33,7 +33,7 @@ class UpdateCategoryColumnToArray extends Migration
 
             case 'mysql': {
                 Schema::table('sendgrid_webhook_events', function (Blueprint $table) {
-                    $table->jsonb('categories')->default(json_encode([]));
+                    $table->jsonb('categories');
                     $table->index([DB::raw('categories(767)')], 'categories_index');
                 });
 
